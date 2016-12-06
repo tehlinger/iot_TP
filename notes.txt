@@ -3,3 +3,4 @@ Identifiant  : 2016striot7
 
 ==== TPI COMMANDES ===
 experiment-cli get -l #Get all running experiments
+node-cli -i 56746 -l strasbourg,m3,2+30-34 -up tutorial_m3.elf #upload proprietary binaries on all nodes
