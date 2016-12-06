@@ -1,2 +1,5 @@
 Identifiant  : 2016striot7
-Mot de passe : XrpIJ16i
+
+
+==== TPI COMMANDES ===
+experiment-cli get -l #Get all running experiments
