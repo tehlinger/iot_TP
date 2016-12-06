@@ -2,5 +2,15 @@ Identifiant  : 2016striot7
 
 
 ==== TPI COMMANDES ===
+
+--I.Prise en main des noeuds
+
 experiment-cli get -l #Get all running experiments
-node-cli -i 56746 -l strasbourg,m3,2+30-34 -up tutorial_m3.elf #upload proprietary binaries on all nodes
+node-cli -i 56476 -l strasbourg,m3,2+30-34 -up tutorial_m3.elf #upload proprietary binaries on all nodes
+node-cli -i 56476 -sta #launch nodes
+nc m3-<node_id> 20000 #Contrôler un noeud
+
+--II.Compilation firmware
+
+https://www.iot-lab.info/tutorials/monitor-consumption-m3-node/
+
