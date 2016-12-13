@@ -275,6 +275,21 @@ $ node-cli reset --exclude strasbourg,m30
 \end{lstlisting}
 
 Malheureusement nous n'avons pas réussi à visualiser la topologie de notre réseau avec Foren6. Par conséquent, pour trouver notre PanID nous sommes passés par Wireshark. Comme prévu, c'était le \texttt{0x000007}.
+La figure \ref{fig:wireshark} montre l'analyse de la capture avec Wireshark qui nous a permis de trouver notre PanID. La figure \ref{fig:script} nous montre l'exécution du script dans notre réseau. On y voit notre que notre graphe est composé d'une racine et de 5 feuilles, il n'y a donc aucun nœud intermédiaire dans notre topologie.
+
+\begin{figure}
+\centering
+  \includegraphics[keepaspectratio,width=\linewidth]{img/pan_id_720}
+  \captionof{figure}{Pan ID (encadré rouge), trouvé grâce à Wireshark.}
+  \label{fig:wireshark}
+\end{figure}
+
+\begin{figure}
+\centering
+  \includegraphics[keepaspectratio,width=\linewidth]{img/tree}
+  \captionof{figure}{Exécution du script \texttt{get\_rpl\_tree.sh} dans notre réseau.}
+  \label{fig:script}
+\end{figure}
 
 
 \end{document}
