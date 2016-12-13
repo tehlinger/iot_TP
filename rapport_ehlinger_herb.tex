@@ -107,7 +107,7 @@
 \chead{}
 \rhead{}
 % Footer (you may change this to your own needs)
-\lfoot{\footnotesize Thibaut EHLINGER et Benjamin HERB \textbullet ~ OS embarqués}
+\lfoot{\footnotesize Thibaut EHLINGER et Benjamin HERB \textbullet ~ Internet des objets}
 \cfoot{}
 \rfoot{\footnotesize \thepage\ /\pageref{LastPage}}	% "Page 1 of 2"
 \renewcommand{\headrulewidth}{0.0pt}
@@ -136,7 +136,7 @@
 \pretitle{\vspace{-15pt} \begin{flushleft} \HorRule 
 				\fontsize{15}{15} \usefont{OT1}{phv}{b}{n} \color{DarkRed} \selectfont 
 				}
-\title{OS embarqués : projet}					% Title of your article goes here
+\title{TP IoT LAB}					% Title of your article goes here
 \posttitle{\par\end{flushleft}\vskip 0.1em}
 
 \preauthor{\begin{flushleft}
@@ -156,7 +156,7 @@
 \thispagestyle{fancy} 			% Enabling the custom headers/footers for the first page 
 
 % The first character should be within \initial{}
-\initial{D}\textbf{ans} ce rapport, nous allons vous présenter notre travail concernant le TP2 d'IoT. Pour rappel, il fallait dans un premier temps modifier  certains paramètres (PanID, canal radio) et compiler une version de \texttt{Contiki OS} compatible avec les nœuds de la plate-forme FIT/IoT-lab. Ensuite il fallait flasher les six nœuds qui nous étaient attribués avec le binaire obtenu. Puis, nous avons dû mettre en œuvre RPL, Foren6 et Stack RIME.  Nous allons vous présenter les différentes étapes de ce TP.
+\initial{D}\textbf{ans} ce rapport, nous allons vous présenter notre travail concernant le TP2 d'IoT. Pour rappel, il fallait dans un premier temps modifier  certains paramètres (PanID, canal radio) et compiler une version de \texttt{Contiki OS} compatible avec les nœuds de la plate-forme FIT/IoT-lab. Ensuite il fallait flasher les six nœuds qui nous étaient attribués avec le binaire obtenu. Puis, nous avons dû : mettre en œuvre RPL ; analyser le déploiement du réseau avec le \textit{sniffer} Foren6 et étudier le \textit{Collect Tree Protocol (CTP)}.  Nous allons vous présenter les différentes étapes de ce TP.
 
 
 \section{Contiki OS}
@@ -291,5 +291,6 @@ La figure \ref{fig:wireshark} montre l'analyse de la capture avec Wireshark qui 
   \label{fig:script}
 \end{figure}
 
+\section{Stack RIME}
 
 \end{document}
