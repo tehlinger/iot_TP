@@ -69,7 +69,7 @@
   keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
   keywordstyle=\color{blue},       % keyword style
   otherkeywords={*,...},           % if you want to add more keywords to the set
-  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbers=none,                    % where to put the line-numbers; possible values are (none, left, right)
   numbersep=5pt,                   % how far the line-numbers are from the code
   numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
   rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
@@ -160,11 +160,12 @@
 
 
 \section{Contiki OS}
-Contiki OS est un OS open source spécialisé dans les microcontrôleurs à basse consommation d'énergie reliés à un réseau. Dans un premier temps, nous avons modifié le code de Contiki OS. Pour modifier le canal il fallait modifier \texttt{RF2\_XX\_CHANNEL} dans le fichier \texttt{platform/openlab/radiorf2xx.c}. Nous lui avons affecté la valeur \textbf{17}. Pour le PanID, nous avons fait un \texttt{define IEEE802154\_CONF\_PANID} et nous avons utilisé l'ID \texttt{0x0007}.
+Contiki OS est un OS open source spécialisé dans les microcontrôleurs à basse consommation d'énergie reliés à un réseau. Dans un premier temps, nous avons modifié le code de Contiki OS. Pour modifier le canal il fallait modifier \texttt{RF2\_XX\_CHANNEL} dans le fichier \texttt{platform/openlab/radiorf2xx.c}. Nous lui avons affecté la valeur \textbf{17}. Pour le PanID, nous avons fait un \texttt{define IEEE802154\_CONF\_PANID} et nous avons utilisé l'ID \texttt{0x0007}, dans le fichier 
+\texttt{contiki/platform/openlab/contiki-openlab-conf.h}.
 
 Pour compiler Contiki OS, il fallait utiliser la commande \texttt{make} avec la bonne cible :
 \begin{lstlisting}[language=bash]
-$ make target=iotlab-m3
+$ make TARGET=iotlab-m3
 \end{lstlisting}
 
 Une fois le binaire généré, nous l'avons téléversé sur nos contrôleurs avec 
@@ -182,7 +183,6 @@ Pour information, notre sous-réseau a pour adresse IPv6 \texttt{2001:660:4701:f
 \item lancer \texttt{tunslip6} sur le serveur SSH ;
 \begin{lstlisting}[language=bash]
 $ sudo tunslip6.py 2001:660:4701:f0a6::1/64 -L -a m3-1 -p 20000
-slip connected to ``172.16.10.1:20000''
 \end{lstlisting}
 \item affecter au nœud \texttt{m3-2} son rôle de \textit{border-router} ;
 \begin{lstlisting}[language=bash]
@@ -232,7 +232,41 @@ Routes
 
 \section{Foren6}
 Dans cette section, nous allons déployer Foren6 sur l'un de nœuds de notre réseau dans le but de visualiser la construction du graphe RPL. Foren6 est un outil d'analyse non-intrusif de réseaux 6LowPan .
-Pour visualiser les données, nous avons téléchargé et compilé les 
+Pour visualiser les données, nous avons téléchargé et compilé le code issu du dépôt \url{https://github.com/cetic/foren6} :
+\subsection{Mise en place de Foren6}
+\begin{lstlisting}
+$ sudo apt-get install libqt4-dev qt4-qmake cmake make libexpat1-dev tshark libpcap0.8-dev libc6-dev g++ gcc
+$ git clone https://github.com/cetic/foren6.git
+$ cd foren6
+$ make run
+\end{lstlisting}
+
+Puis nous avons téléchargé le code de la partie Foren6 à exécuter sur le noeud. Avant de le compiler, il fallait modifier une ligne du code afin de configurer le bon canal radio :
+\begin{lstlisting}[language=C]
+// channel between 11 and 26
+static uint8_t channel = 17;
+\end{lstlisting}
+Ensuite, nous avons compilé ce code spécifiquement pour les nœuds de la plateforme IoT-LAB :
+\begin{lstlisting}[language=bash]
+$ mkdir build.m3 && cd build.m3 && cmake .. -DPLATFORM=iotlab-m3
+\end{lstlisting}
+
+Il a fallu ensuite relier le \textit{sniffer} et l'interface graphique, puis relier le stream à un pseudo tty avec \texttt{socat} :
+
+\begin{lstlisting}[language=C]
+$ ssh -i /home/ben/.ssh/id_rsa 2016striot7@strasbourg.iot-lab.info -L 2001:m3-34:20000
+$ socat TCP4:127.0.0.1:2001 pty,link=/tmp/mytty1,raw
+\end{lstlisting}
+
+Cela nous a permis d'obtenir une trace, dans \texttt{tty1}, pour visualiser notre graphe.
+
+\subsection{Utilisation de Foren6}
+Nous avons d'abord \textit{flasher} le sniffer sur un nœud qui n'est pas notre BR :
+
+\begin{lstlisting}[language=bash]
+node-cli -i 56200 -l strasbourg,m3,30 --update-profile sniffer
+sniffer_aggregator -l strasbourg,m3,30 -o m3-30.pcap
+\end{lstlisting}
 
 
 \end{document}
