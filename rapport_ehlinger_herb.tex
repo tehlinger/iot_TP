@@ -78,7 +78,7 @@
   showtabs=false,                  % show tabs within strings adding particular underscores
   stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
   stringstyle=\color{mymauve},     % string literal style
-    belowskip=1mm,
+    belowskip=-3.3em,
   tabsize=2,	                   % sets default tabsize to 2 spaces
   title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
 }
@@ -261,12 +261,20 @@ $ socat TCP4:127.0.0.1:2001 pty,link=/tmp/mytty1,raw
 Cela nous a permis d'obtenir une trace, dans \texttt{tty1}, pour visualiser notre graphe.
 
 \subsection{Utilisation de Foren6}
-Nous avons d'abord \textit{flasher} le sniffer sur un nœud qui n'est pas notre BR :
+Nous avons d'abord \textit{flashé} le sniffer sur un nœud qui n'est pas notre BR (ici, le noeud \texttt{m30}) :
 
 \begin{lstlisting}[language=bash]
-node-cli -i 56200 -l strasbourg,m3,30 --update-profile sniffer
-sniffer_aggregator -l strasbourg,m3,30 -o m3-30.pcap
+$ node-cli -i 56200 -l strasbourg,m3,30 --update-profile sniffer
+$ sniffer_aggregator -l strasbourg,m3,30 -o m3-30.pcap
 \end{lstlisting}
+
+Une fois la capture lancée, on \textit{reset} les nœuds, mise à part le \textit{sniffer}, afin d'être sûr que le \textit{sniffer} soit actif lors de l'initialisation du graphe.
+
+\begin{lstlisting}[language=bash]
+$ node-cli reset --exclude strasbourg,m30 
+\end{lstlisting}
+
+Malheureusement nous n'avons pas réussi à visualiser la topologie de notre réseau avec Foren6. Par conséquent, pour trouver notre PanID nous sommes passés par Wireshark. Comme prévu, c'était le \texttt{0x000007}.
 
 
 \end{document}
