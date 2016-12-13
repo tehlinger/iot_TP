@@ -17,6 +17,7 @@
 \usepackage[protrusion=true,expansion=true]{microtype}				% Better typography
 \usepackage{amsmath,amsfonts,amsthm}					% Math packages
 \usepackage[pdftex]{graphicx}									% Enable pdflatex
+\usepackage{moreverb}
 \usepackage[margin=1in]{geometry}
 \usepackage[svgnames]{xcolor}									% Enabling colors by their 'svgnames'
 \usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption}	% Custom captions under/above floats
@@ -42,10 +43,10 @@
   xleftmargin=\parindent,
   language=bash,
   showstringspaces=false,
-  basicstyle=\footnotesize\ttfamily,
+  basicstyle=\ttfamily,
   keywordstyle=\bfseries\color{green!40!black},
   commentstyle=\itshape\color{purple!40!black},
-  identifierstyle=\color{blue},
+  %identifierstyle=\color{blue},
   stringstyle=\color{orange},
 }
 
@@ -77,6 +78,7 @@
   showtabs=false,                  % show tabs within strings adding particular underscores
   stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
   stringstyle=\color{mymauve},     % string literal style
+    belowskip=1mm,
   tabsize=2,	                   % sets default tabsize to 2 spaces
   title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
 }
@@ -154,7 +156,7 @@
 \thispagestyle{fancy} 			% Enabling the custom headers/footers for the first page 
 
 % The first character should be within \initial{}
-\initial{D}\textbf{ans} ce rapport, nous allons vous présenter notre travail concernant le TP2 d'IoT. Pour rappel, il fallait dans un premier temps modifier  certains paramètres (PanID, canal radio) et compiler une version de \texttt{Contiki OS} compatible avec les nœuds de la plate-forme FIT/IoT-lab. Ensuite il fallait flasher les six nœuds qui nous étaient attribués avec le binaire obtenu. Ensuite, nous avons dû mettre en œuvre RPL, Foren6 et Stack RIME.  Nous allons vous présenter les différentes étapes de ce tp.
+\initial{D}\textbf{ans} ce rapport, nous allons vous présenter notre travail concernant le TP2 d'IoT. Pour rappel, il fallait dans un premier temps modifier  certains paramètres (PanID, canal radio) et compiler une version de \texttt{Contiki OS} compatible avec les nœuds de la plate-forme FIT/IoT-lab. Ensuite il fallait flasher les six nœuds qui nous étaient attribués avec le binaire obtenu. Puis, nous avons dû mettre en œuvre RPL, Foren6 et Stack RIME.  Nous allons vous présenter les différentes étapes de ce TP.
 
 
 \section{Contiki OS}
@@ -162,12 +164,12 @@ Contiki OS est un OS open source spécialisé dans les microcontrôleurs à bass
 
 Pour compiler Contiki OS, il fallait utiliser la commande \texttt{make} avec la bonne cible :
 \begin{lstlisting}[language=bash]
-make target=iotlab-m3
+$ make target=iotlab-m3
 \end{lstlisting}
 
 Une fois le binaire généré, nous l'avons téléversé sur nos contrôleurs avec 
 \begin{lstlisting}[language=bash]
-node-cli -i 56476 -l strasbourg,m3,2+30-34 -up tutorial_m3.elf
+$ node-cli -i 56476 -l strasbourg,m3,2+30-34 -up tutorial_m3.elf
 \end{lstlisting}
 
 \section{RPL}
@@ -175,21 +177,62 @@ Une fois nos contrôleurs dotés d'un OS, nous avons mis en œuvre RPL, un proto
 
 %TUTORIEL : https://www.iot-lab.info/tutorials/basic-m3-nodes-contiki-uip-stack-with-public-ipv6-on-ssh-front-end/
 
-Pour information, notre sous-réseau a pour adresse IPv6 : \texttt{2001:660:4701:f0a6/64}. Notre \textit{border-router} est le nœud numéro \textbf{\texttt{m3-2}}. Pour déployer notre réseau nous avons dû :
+Pour information, notre sous-réseau a pour adresse IPv6 \texttt{2001:660:4701:f0a6/64}. Notre \textit{border-router} est le nœud numéro \textbf{\texttt{m3-2}}. Pour déployer notre réseau nous avons dû :
 \begin{enumerate}
 \item lancer \texttt{tunslip6} sur le serveur SSH ;
 \begin{lstlisting}[language=bash]
-sudo tunslip6.py 2001:660:4701:f0a6::1/64 -L -a m3-1 -p 20000
+$ sudo tunslip6.py 2001:660:4701:f0a6::1/64 -L -a m3-1 -p 20000
 slip connected to ``172.16.10.1:20000''
 \end{lstlisting}
 \item affecter au nœud \texttt{m3-2} son rôle de \textit{border-router} ;
 \begin{lstlisting}[language=bash]
-node-cli --update ~/border-router.iotlab-m3 -l strasbourg,m3,2
+$ node-cli --update ~/border-router.iotlab-m3 -l strasbourg,m3,2
 \end{lstlisting}
 \item récupérer l'adresse du \textit{border-router}. Il s'agissait de \texttt{2001:660:4701:f0a6::a685}
 \item déployer un serveur HTTP sur tous les autres nœuds du réseau :
 \begin{lstlisting}[language=bash]
-node-cli --update ~/http-server.iotlab-m3 -l strasbourg,m3,30-34
+$ node-cli --update ~/http-server.iotlab-m3 -l strasbourg,m3,30-34
 \end{lstlisting}
 \end{enumerate}
+
+Ci-dessous le texte lu sur l'interface web du BR :
+
+\begin{lstlisting}
+Neighbors
+fe80::a786
+fe80::b286
+fe80::a885
+fe80::b287
+fe80::b086
+Routes
+2001:660:4701:f0a6::a786/128 (via fe80::a786) 16711327s
+2001:660:4701:f0a6::b286/128 (via fe80::b286) 16711398s
+2001:660:4701:f0a6::a885/128 (via fe80::a885) 16711398s
+2001:660:4701:f0a6::b287/128 (via fe80::b287) 16711397s
+2001:660:4701:f0a6::b086/128 (via fe80::b086) 16711396s
+\end{lstlisting}
+
+Et le texte lu sur l'un des autres nœuds :
+
+\begin{lstlisting}
+ Neighbors
+
+fe80::a685 PREFERRED
+fe80::b286
+fe80::b287
+fe80::b086
+fe80::a885
+
+Default Route
+
+fe80::a685
+
+Routes
+\end{lstlisting}
+
+\section{Foren6}
+Dans cette section, nous allons déployer Foren6 sur l'un de nœuds de notre réseau dans le but de visualiser la construction du graphe RPL. Foren6 est un outil d'analyse non-intrusif de réseaux 6LowPan .
+Pour visualiser les données, nous avons téléchargé et compilé les 
+
+
 \end{document}
