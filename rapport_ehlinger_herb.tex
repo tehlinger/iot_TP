@@ -182,7 +182,7 @@ Pour information, notre sous-réseau a pour adresse IPv6 \texttt{2001:660:4701:f
 \begin{enumerate}
 \item lancer \texttt{tunslip6} sur le serveur SSH ;
 \begin{lstlisting}[language=bash]
-$ sudo tunslip6.py 2001:660:4701:f0a6::1/64 -L -a m3-1 -p 20000
+$ sudo tunslip6.py 2001:660:4701:f0a6::1/64 -L -a m3-2 -p 20000
 \end{lstlisting}
 \item affecter au nœud \texttt{m3-2} son rôle de \textit{border-router} ;
 \begin{lstlisting}[language=bash]
@@ -231,9 +231,10 @@ Routes
 \end{lstlisting}
 
 \section{Foren6}
-Dans cette section, nous allons déployer Foren6 sur l'un de nœuds de notre réseau dans le but de visualiser la construction du graphe RPL. Foren6 est un outil d'analyse non-intrusif de réseaux 6LowPan .
+Dans cette section, nous allons déployer Foren6 sur l'un des nœuds de notre réseau dans le but de visualiser la construction du graphe RPL. Foren6 est un outil d'analyse non-intrusif de réseaux 6LowPan .
 Pour visualiser les données, nous avons téléchargé et compilé le code issu du dépôt \url{https://github.com/cetic/foren6} :
 \subsection{Mise en place de Foren6}
+Pour lancer l'interface graphique de Foren6 sur l'ordinateur nous avons utilisé les commandes :
 \begin{lstlisting}
 $ sudo apt-get install libqt4-dev qt4-qmake cmake make libexpat1-dev tshark libpcap0.8-dev libc6-dev g++ gcc
 $ git clone https://github.com/cetic/foren6.git
@@ -251,7 +252,7 @@ Ensuite, nous avons compilé ce code spécifiquement pour les nœuds de la plate
 $ mkdir build.m3 && cd build.m3 && cmake .. -DPLATFORM=iotlab-m3
 \end{lstlisting}
 
-Il a fallu ensuite relier le \textit{sniffer} et l'interface graphique, puis relier le stream à un pseudo tty avec \texttt{socat} :
+Il a fallu ensuite relier le \textit{sniffer} à l'interface graphique, puis relier le stream à un pseudo tty avec \texttt{socat} :
 
 \begin{lstlisting}[language=C]
 $ ssh -i /home/ben/.ssh/id_rsa 2016striot7@strasbourg.iot-lab.info -L 2001:m3-34:20000
@@ -293,7 +294,7 @@ La figure \ref{fig:wireshark} montre l'analyse de la capture avec Wireshark qui 
 
 \section{Stack RIME}
 
-Afin d'avoir un puit et cinq noeuds, nous avons compilé deux firmwares différents. Pour cela nous avons modifié example-collect.c. 
+Afin d'avoir un puits et cinq noeuds, nous avons compilé deux firmwares différents. Pour cela nous avons modifié \texttt{example-collect.c}. 
 
 \begin{lstlisting}[language=C]
 #DEFINE SINK 1
@@ -318,7 +319,7 @@ if(etimer_expired(&periodic)) {
 }
 \end{lstlisting}
 
-Enfin nous avons pu compiler puis flasher le firmware sur les différents noeuds :
+Enfin nous avons pu compiler puis flasher le \textit{firmware} sur les différents noeuds :
 
 \begin{lstlisting}[language=bash]
 make TARGET=iotlab-m3
@@ -326,5 +327,11 @@ make TARGET=iotlab-m3
 node-cli -i 56200 -l strasbourg,m3,30-34 -up example-collect-node.iotlab-m3 
 node-cli -i 56200 -l strasbourg,m3,2 -up example-collect-sink.iotlab-m3 
 \end{lstlisting}
+
+\section{Conclusion}
+Dans ce TP nous avons donc rapidement pris en main la plate-forme FIT/IoT-lab. Nous avons appris à compiler un OS et à déployer un protocole de routage adapter au WSN ainsi constitué. Enfin, Foren6 devait nous permettre d'observer les échanges entre agents du réseau, mais cela n'a pas marché comme prévu.
+
+Cette expérience fût enrichissante, car nous avons découvert une plate-forme de grande ampleur dédiée à la recherche en IoT, et la documentation fournie pour la prendre en main est extrêmement complète.
+
 
 \end{document}
