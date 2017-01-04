@@ -258,7 +258,7 @@ $ ssh -i /home/ben/.ssh/id_rsa 2016striot7@strasbourg.iot-lab.info -L 2001:m3-34
 $ socat TCP4:127.0.0.1:2001 pty,link=/tmp/mytty1,raw
 \end{lstlisting}
 
-Cela nous a permis d'obtenir une trace, dans \texttt{tty1}, pour visualiser notre graphe.
+Cela nous a permis d'obtenir une trace, dans \texttt{tty1}, pour visualiser notre graphe dans l'interface graphique Foren6.
 
 \subsection{Utilisation de Foren6}
 Nous avons d'abord \textit{flashé} le sniffer sur un nœud qui n'est pas notre BR (ici, le noeud \texttt{m30}) :
@@ -292,5 +292,39 @@ La figure \ref{fig:wireshark} montre l'analyse de la capture avec Wireshark qui 
 \end{figure}
 
 \section{Stack RIME}
+
+Afin d'avoir un puit et cinq noeuds, nous avons compilé deux firmwares différents. Pour cela nous avons modifié example-collect.c. 
+
+\begin{lstlisting}[language=C]
+#DEFINE SINK 1
+
+[...]
+
+if(SINK) {
+  printf("I am a sink\n");
+  collect_set_sink(&tc, 1);
+}
+\end{lstlisting}
+
+Pour créer le firmware \texttt{example-collect-sink.iotlab-m3} nous avons donc mis la valeur \texttt{SINK} à 1 et pour le firmware \texttt{example-collect-node.iotlab-m3} la valeur à 0.
+
+
+Puis pour mettre en place une fréquence d'émission à 5 secondes, nous avons modifié cette partie de \texttt{example-collect.c} :
+
+\begin{lstlisting}[language=C]
+if(etimer_expired(&periodic)) {
+  etimer_set(&periodic, CLOCK_SECOND * 5);
+  etimer_set(&et, random_rand() % (CLOCK_SECOND * 5));
+}
+\end{lstlisting}
+
+Enfin nous avons pu compiler puis flasher le firmware sur les différents noeuds :
+
+\begin{lstlisting}[language=bash]
+make TARGET=iotlab-m3
+
+node-cli -i 56200 -l strasbourg,m3,30-34 -up example-collect-node.iotlab-m3 
+node-cli -i 56200 -l strasbourg,m3,2 -up example-collect-sink.iotlab-m3 
+\end{lstlisting}
 
 \end{document}
